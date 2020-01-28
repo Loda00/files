@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- <iframe
+      src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyAfV_BYPq1IhHx1oW_1zlW2GWLXHRSWrWE&origin=Surco+Peru&destination=Avenida%20Ernesto%20Diez%20Canseco%20230+Peru&avoid=tolls|highways"
+      frameborder="0"
+      style="width: 600px; height: 400px"
+      allowfullscreen=""
+    >
+    </iframe> -->
+    <h1>Jjjjj</h1>
+    <input type="file" id="file" />
+    <button id="enviar">Enviar</button>
+    <!-- <img id="imagen" alt="s" /> -->
+    <!-- <video preload controls width="300px" height="180">
+      <source src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" />
+    </video> -->
+    <div
+      id="documento"
+      [role="s"
+      ]
+      style="width: 200px; height: 100px; background-color: green;"
+    >
+      ARRASTRA AQUI TU DOCUMENTO
+    </div>
+    <progress
+      id="progress"
+      value="0"
+      max="100"
+      style="width: 500px;"
+    ></progress>
+  </body>
+  <script>
+    const dropbox = document.getElementById("documento");
+    const barra = document.getElementById("progress");
+
+    const drop = e => {
+      e.preventDefault();
+      var dt = e.dataTransfer;
+      var files = dt.files;
+      console.log("element", dt, files);
+
+      const data = new FileReader();
+      data.onload = e => {
+        e.preventDefault();
+        console.log("FileReader", e, data);
+        const base64 = data.result;
+        // imagen.src = base64;
+
+        const form = new FormData();
+        form.append("imagen", base64);
+        form.append("name", "report");
+
+        axios.post("http://localhost:3000/doc", form, {
+          headers: {
+            "Content-type": "multipart/form-data"
+          },
+          onUploadProgress(e) {
+            const progress = (e.loaded * 100) / e.total;
+            barra.setAttribute("value", progress);
+          }
+        });
+        return false;
+      };
+      data.readAsDataURL(files[0]);
+      return false;
+    };
+
+    const dragenter = e => {
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
+    const dragover = e => {
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
+    dropbox.addEventListener("dragenter", dragenter);
+    dropbox.addEventListener("dragover", dragover);
+    dropbox.addEventListener("drop", drop);
+
+    // window.addEventListener("DOMContentLoaded", () => {
+    //   console.log("MOUNTED");
+    //   axios
+    //     .get("https://api.ipify.org/?format=json")
+    //     .then(res => console.log("rs", res));
+    // });
+
+    // const button = document.getElementById("enviar");
+    // const imagen = document.getElementById("imagen");
+
+    // button.addEventListener("click", e => {
+    //   e.preventDefault();
+    //   const file = document.getElementById("file");
+    //   // const { value, file } = e.target;
+    //   console.log("file", file.files[0]);
+
+    //   const data = new FileReader();
+    //   data.onload = e => {
+    //     e.preventDefault();
+    //     console.log("FileReader", e, data);
+    //     const base64 = data.result;
+    //     // imagen.src = base64;
+
+    //     const form = new FormData();
+    //     form.append("imagen", base64);
+    //     form.append("name", "report");
+
+    //     axios
+    //       .post("http://localhost:3000/doc", form)
+    //       .then(res => console.log("res", res))
+    //       .catch(e => console.log("err", e));
+
+    // axios
+    //   .post("http://localhost:3000/video", form, {
+    //     headers: {
+    //       "Access-Control-Allow-Origin": "*"
+    //       // "Content-Type": "application/json",
+    // "Content-Type": "multipart/form-data"
+    //     }
+    //   })
+    //   .then(res => console.log("res", res))
+    //   .catch(e => console.log("e", e));
+
+    // axios
+    //   .post("http://localhost:3000/img", form)
+    //   .then(res => console.log("res", res))
+    //   .catch(e => console.log("e", e));
+    //   };
+    //   data.readAsDataURL(file.files[0]);
+    // });
+  </script>
+</html>
